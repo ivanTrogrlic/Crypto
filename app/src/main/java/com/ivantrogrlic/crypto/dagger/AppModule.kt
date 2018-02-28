@@ -3,7 +3,7 @@ package com.ivantrogrlic.crypto.dagger
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import com.ivantrogrlic.crypto.rest.RestComponent
+import com.ivantrogrlic.crypto.rest.RestModule
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -12,7 +12,7 @@ import javax.inject.Singleton
  * Created by ivantrogrlic on 26/02/2018.
  */
 
-@Module(subcomponents = arrayOf(RestComponent::class))
+@Module(includes = arrayOf(RestModule::class, ViewModelModule::class))
 class AppModule {
 
     @Singleton

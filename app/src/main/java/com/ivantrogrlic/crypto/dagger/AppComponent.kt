@@ -4,9 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.ivantrogrlic.crypto.CryptoApplication
-import com.ivantrogrlic.crypto.rest.RestComponent
 import dagger.BindsInstance
 import dagger.Component
+import dagger.android.AndroidInjectionModule
 import javax.inject.Singleton
 
 /**
@@ -14,7 +14,9 @@ import javax.inject.Singleton
  */
 
 @Singleton
-@Component(modules = arrayOf(AppModule::class))
+@Component(modules = arrayOf(AndroidInjectionModule::class,
+        AppModule::class,
+        HomeActivityModule::class))
 interface AppComponent {
 
     @Component.Builder
@@ -29,8 +31,6 @@ interface AppComponent {
 
     @ApplicationContext
     fun context(): Context
-
-    fun netComponentBuilder(): RestComponent.Builder
 
     fun sharedPreferences(): SharedPreferences
 

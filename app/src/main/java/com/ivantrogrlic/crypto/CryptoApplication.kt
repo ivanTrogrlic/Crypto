@@ -1,19 +1,25 @@
 package com.ivantrogrlic.crypto
 
+import android.app.Activity
 import android.app.Application
 import com.ivantrogrlic.crypto.dagger.AppComponent
 import com.ivantrogrlic.crypto.dagger.DaggerAppComponent
-import com.ivantrogrlic.crypto.rest.RestComponent
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasActivityInjector
+import javax.inject.Inject
+
 
 /**
  * Created by ivantrogrlic on 26/02/2018.
  */
 
-class CryptoApplication : Application() {
+class CryptoApplication : Application(), HasActivityInjector {
+
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
 
     companion object {
         lateinit var appComponent: AppComponent
-        var netComponent: RestComponent? = null
     }
 
     override fun onCreate() {
@@ -25,7 +31,10 @@ class CryptoApplication : Application() {
         appComponent.inject(this)
     }
 
+    override fun activityInjector(): DispatchingAndroidInjector<Activity> {
+        return dispatchingAndroidInjector
+    }
+
     fun component() = appComponent
-    fun netComponent() = netComponent
 
 }
