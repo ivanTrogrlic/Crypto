@@ -1,4 +1,4 @@
-package com.ivantrogrlic.crypto.dagger
+package com.ivantrogrlic.crypto.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider

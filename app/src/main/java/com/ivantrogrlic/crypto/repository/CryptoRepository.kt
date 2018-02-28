@@ -1,4 +1,4 @@
-package com.ivantrogrlic.crypto.home
+package com.ivantrogrlic.crypto.repository
 
 import com.ivantrogrlic.crypto.model.Crypto
 import com.ivantrogrlic.crypto.rest.CryptoWebService

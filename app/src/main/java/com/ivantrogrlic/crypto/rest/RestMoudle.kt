@@ -1,7 +1,7 @@
 package com.ivantrogrlic.crypto.rest
 
 import com.ivantrogrlic.crypto.BuildConfig
-import com.ivantrogrlic.crypto.home.CryptoRepository
+import com.ivantrogrlic.crypto.repository.CryptoRepository
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient

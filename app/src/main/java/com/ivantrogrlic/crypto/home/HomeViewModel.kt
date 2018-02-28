@@ -2,6 +2,7 @@ package com.ivantrogrlic.crypto.home
 
 import android.arch.lifecycle.ViewModel
 import com.ivantrogrlic.crypto.model.Crypto
+import com.ivantrogrlic.crypto.repository.CryptoRepository
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject

@@ -1,8 +1,9 @@
-package com.ivantrogrlic.crypto.dagger
+package com.ivantrogrlic.crypto.di
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.ivantrogrlic.crypto.home.HomeViewModel
+import com.ivantrogrlic.crypto.viewmodel.ViewModelFactory
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

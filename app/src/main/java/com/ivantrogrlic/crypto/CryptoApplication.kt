@@ -2,8 +2,8 @@ package com.ivantrogrlic.crypto
 
 import android.app.Activity
 import android.app.Application
-import com.ivantrogrlic.crypto.dagger.AppComponent
-import com.ivantrogrlic.crypto.dagger.DaggerAppComponent
+import com.ivantrogrlic.crypto.di.AppComponent
+import com.ivantrogrlic.crypto.di.DaggerAppComponent
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import javax.inject.Inject

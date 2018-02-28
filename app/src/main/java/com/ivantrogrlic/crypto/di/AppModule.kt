@@ -1,4 +1,4 @@
-package com.ivantrogrlic.crypto.dagger
+package com.ivantrogrlic.crypto.di
 
 import android.app.Application
 import android.content.Context
