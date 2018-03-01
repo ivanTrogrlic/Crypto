@@ -17,4 +17,8 @@ class CryptoRepository(private val cryptoWebService: CryptoWebService) {
             cryptoWebService.getCryptoCurrencies(limit, convert)
                     .subscribeOn(Schedulers.io())
 
+    fun fetchCryptoCurrency(id: String, limit: Int, convert: String): Single<Crypto> =
+            cryptoWebService.getCrypto(id, limit, convert)
+                    .subscribeOn(Schedulers.io())
+
 }

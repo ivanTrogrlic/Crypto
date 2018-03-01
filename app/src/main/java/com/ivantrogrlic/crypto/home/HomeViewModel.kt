@@ -19,6 +19,8 @@ class HomeViewModel @Inject constructor(private val cryptoRepository: CryptoRepo
     private var homeState: BehaviorSubject<HomeState> =
             BehaviorSubject.createDefault(HomeState.Currencies(emptyList()))
 
+    override fun onCleared() = homeState.onComplete()
+
     fun observeHomeState(): Observable<HomeState> = homeState.hide()
 
     fun refreshCryptoCurrencies() {

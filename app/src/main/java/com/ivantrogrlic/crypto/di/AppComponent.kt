@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.ivantrogrlic.crypto.CryptoApplication
+import com.ivantrogrlic.crypto.detail.DetailComponent
+import com.ivantrogrlic.crypto.detail.DetailModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -28,6 +30,8 @@ interface AppComponent {
     }
 
     fun inject(app: CryptoApplication)
+
+    fun inject(module: DetailModule): DetailComponent
 
     @ApplicationContext
     fun context(): Context
