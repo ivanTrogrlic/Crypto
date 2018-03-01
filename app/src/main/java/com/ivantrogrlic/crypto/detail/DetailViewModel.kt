@@ -1,11 +1,12 @@
 package com.ivantrogrlic.crypto.detail
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.ivantrogrlic.crypto.model.Crypto
 import com.ivantrogrlic.crypto.repository.CryptoRepository
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,22 +18,22 @@ import javax.inject.Singleton
 class DetailViewModel @Inject constructor(private val id: String,
                                           private val cryptoRepository: CryptoRepository) : ViewModel() {
 
-    private var detailState: BehaviorSubject<DetailState> =
-            BehaviorSubject.createDefault(DetailState.Currency(null))
+    private val compositeDisposable = CompositeDisposable()
+    val detailState = MutableLiveData<DetailState>()
 
-    override fun onCleared() = detailState.onComplete()
-
-    fun observeDetailState(): Observable<DetailState> = detailState.hide()
+    override fun onCleared() = compositeDisposable.clear()
 
     fun fetchCryptoCurrency() {
-        cryptoRepository.fetchCryptoCurrency(id, 100, "EUR") // TODO user will provide these
-                .map { DetailState.Currency(it) }
-                .subscribe({ state, error -> reduceState(state, error) })
+        compositeDisposable.add(
+                cryptoRepository.fetchCryptoCurrency(id, 100, "EUR") // TODO user will provide these
+                        .map { DetailState.Currency(it) }
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ state, error -> reduceState(state, error) }))
     }
 
     private fun reduceState(state: DetailState.Currency?, error: Throwable?) {
-        error?.let { detailState.onNext(DetailState.Error(it.message)) }
-        state?.let { detailState.onNext(it) }
+        error?.let { detailState.value = DetailState.Error(it.message) }
+        state?.let { detailState.value = it }
     }
 
 }

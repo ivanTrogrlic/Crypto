@@ -19,6 +19,6 @@ interface CryptoWebService {
     @GET("ticker/{id}/")
     fun getCrypto(@Path("id") id: String,
                   @Query("limit") limit: Int,
-                  @Query("convert") convert: String): Single<Crypto>
+                  @Query("convert") convert: String): Single<List<Crypto>>
 
 }

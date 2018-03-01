@@ -1,9 +1,12 @@
 package com.ivantrogrlic.crypto.home
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.Toast.LENGTH_SHORT
+import android.widget.Toast.makeText
 import com.ivantrogrlic.crypto.R
 import com.ivantrogrlic.crypto.detail.DetailActivity
 import dagger.android.AndroidInjection
@@ -27,9 +30,13 @@ class HomeActivity : AppCompatActivity() {
                 .get(HomeViewModel::class.java)
 
         homeViewModel.refreshCryptoCurrencies()
+        homeViewModel.homeState
+                .observe(this, Observer {
+                    makeText(this, it.toString(), LENGTH_SHORT).show()
+                })
 
         start_button.onClick {
-            val intent = DetailActivity.create(application, "12")
+            val intent = DetailActivity.create(application, "bitcoin") // TODO pass id
             startActivity(intent)
         }
     }

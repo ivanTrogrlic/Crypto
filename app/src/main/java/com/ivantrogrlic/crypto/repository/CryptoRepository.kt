@@ -19,6 +19,7 @@ class CryptoRepository(private val cryptoWebService: CryptoWebService) {
 
     fun fetchCryptoCurrency(id: String, limit: Int, convert: String): Single<Crypto> =
             cryptoWebService.getCrypto(id, limit, convert)
+                    .map { it[0] } // TODO
                     .subscribeOn(Schedulers.io())
 
 }

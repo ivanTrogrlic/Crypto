@@ -1,10 +1,11 @@
 package com.ivantrogrlic.crypto.home
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.ivantrogrlic.crypto.model.Crypto
 import com.ivantrogrlic.crypto.repository.CryptoRepository
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,22 +17,21 @@ import javax.inject.Singleton
 @Singleton
 class HomeViewModel @Inject constructor(private val cryptoRepository: CryptoRepository) : ViewModel() {
 
-    private var homeState: BehaviorSubject<HomeState> =
-            BehaviorSubject.createDefault(HomeState.Currencies(emptyList()))
+    private val compositeDisposable = CompositeDisposable()
+    val homeState = MutableLiveData<HomeState>()
 
-    override fun onCleared() = homeState.onComplete()
-
-    fun observeHomeState(): Observable<HomeState> = homeState.hide()
+    override fun onCleared() = compositeDisposable.clear()
 
     fun refreshCryptoCurrencies() {
         cryptoRepository.fetchCryptoCurrencies(100, "EUR") // TODO user will provide these
                 .map { HomeState.Currencies(it) }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ state, error -> reduceState(state, error) })
     }
 
     private fun reduceState(state: HomeState.Currencies?, error: Throwable?) {
-        error?.let { homeState.onNext(HomeState.Error(it.message)) }
-        state?.let { homeState.onNext(it) }
+        error?.let { homeState.value = HomeState.Error(it.message) }
+        state?.let { homeState.value = it }
     }
 
 }

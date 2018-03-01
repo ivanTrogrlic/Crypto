@@ -1,10 +1,13 @@
 package com.ivantrogrlic.crypto.detail
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.Toast.LENGTH_SHORT
+import android.widget.Toast.makeText
 import com.ivantrogrlic.crypto.CryptoApplication
 import com.ivantrogrlic.crypto.R
 import com.ivantrogrlic.crypto.di.PerActivity
@@ -44,6 +47,10 @@ class DetailActivity : AppCompatActivity() {
                 .get(DetailViewModel::class.java)
 
         detailViewModel.fetchCryptoCurrency()
+        detailViewModel.detailState
+                .observe(this, Observer<DetailState> {
+                    makeText(this, it.toString(), LENGTH_SHORT).show()
+                })
     }
 
 }
@@ -58,6 +65,7 @@ interface DetailComponent {
 class DetailModule(private val id: String) {
 
     @Provides
+    @PerActivity
     fun bindDetailViewModelFactory(repository: CryptoRepository): DetailViewModelFactory {
         return DetailViewModelFactory(id, repository)
     }
