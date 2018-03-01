@@ -5,23 +5,23 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.widget.Toast.LENGTH_SHORT
 import android.widget.Toast.makeText
-import com.ivantrogrlic.crypto.CryptoApplication
 import com.ivantrogrlic.crypto.R
+import com.ivantrogrlic.crypto.detail.DetailActivity.Companion.KEY_ID
 import com.ivantrogrlic.crypto.di.PerActivity
 import com.ivantrogrlic.crypto.repository.CryptoRepository
 import dagger.Module
 import dagger.Provides
-import dagger.Subcomponent
+import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * Created by ivantrogrlic on 01/03/2018.
  */
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : DaggerAppCompatActivity() {
 
     companion object {
         const val KEY_ID = "key_crypto_id"
@@ -39,9 +39,6 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        val id = intent.getStringExtra(KEY_ID)
-        CryptoApplication.appComponent.inject(DetailModule(id)).inject(this)
-
         val detailViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(DetailViewModel::class.java)
@@ -55,18 +52,20 @@ class DetailActivity : AppCompatActivity() {
 
 }
 
-@PerActivity
-@Subcomponent(modules = arrayOf(DetailModule::class))
-interface DetailComponent {
-    fun inject(activity: DetailActivity)
-}
-
 @Module
-class DetailModule(private val id: String) {
+class DetailModule {
 
     @Provides
     @PerActivity
-    fun bindDetailViewModelFactory(repository: CryptoRepository): DetailViewModelFactory {
+    @Named("cryptoKey")
+    fun provideId(activity: DetailActivity): String {
+        return activity.intent.getStringExtra(KEY_ID)
+    }
+
+    @Provides
+    @PerActivity
+    fun bindDetailViewModelFactory(@Named("cryptoKey") id: String,
+                                   repository: CryptoRepository): DetailViewModelFactory {
         return DetailViewModelFactory(id, repository)
     }
 
