@@ -1,6 +1,7 @@
 package com.ivantrogrlic.crypto.rest
 
 import com.ivantrogrlic.crypto.model.Crypto
+import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -14,11 +15,11 @@ interface CryptoWebService {
 
     @GET("ticker/")
     fun getCryptoCurrencies(@Query("limit") limit: Int,
-                            @Query("convert") convert: String): Single<List<Crypto>>
+                            @Query("convert") convert: String): Observable<List<Crypto>>
 
     @GET("ticker/{id}/")
     fun getCrypto(@Path("id") id: String,
                   @Query("limit") limit: Int,
-                  @Query("convert") convert: String): Single<List<Crypto>>
+                  @Query("convert") convert: String): Observable<List<Crypto>>
 
 }

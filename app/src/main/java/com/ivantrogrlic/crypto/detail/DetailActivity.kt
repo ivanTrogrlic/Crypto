@@ -8,14 +8,8 @@ import android.os.Bundle
 import android.widget.Toast.LENGTH_SHORT
 import android.widget.Toast.makeText
 import com.ivantrogrlic.crypto.R
-import com.ivantrogrlic.crypto.detail.DetailActivity.Companion.KEY_ID
-import com.ivantrogrlic.crypto.di.PerActivity
-import com.ivantrogrlic.crypto.repository.CryptoRepository
-import dagger.Module
-import dagger.Provides
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * Created by ivantrogrlic on 01/03/2018.
@@ -43,30 +37,11 @@ class DetailActivity : DaggerAppCompatActivity() {
                 .of(this, viewModelFactory)
                 .get(DetailViewModel::class.java)
 
-        detailViewModel.fetchCryptoCurrency()
+        detailViewModel.refreshCurrency()
         detailViewModel.detailState
                 .observe(this, Observer<DetailState> {
                     makeText(this, it.toString(), LENGTH_SHORT).show()
                 })
-    }
-
-}
-
-@Module
-class DetailModule {
-
-    @Provides
-    @PerActivity
-    @Named("cryptoKey")
-    fun provideId(activity: DetailActivity): String {
-        return activity.intent.getStringExtra(KEY_ID)
-    }
-
-    @Provides
-    @PerActivity
-    fun bindDetailViewModelFactory(@Named("cryptoKey") id: String,
-                                   repository: CryptoRepository): DetailViewModelFactory {
-        return DetailViewModelFactory(id, repository)
     }
 
 }
