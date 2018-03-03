@@ -28,33 +28,36 @@ class DetailViewModel @Inject constructor(private val id: String,
 
     private val compositeDisposable = CompositeDisposable()
     private val commands = PublishSubject.create<Command>()
-    val detailState = MutableLiveData<DetailState>()
+    val detailState = MutableLiveData<State>()
 
     init {
-        compositeDisposable.add(commandExecutor())
+        compositeDisposable.add(model())
     }
 
     override fun onCleared() = compositeDisposable.clear()
 
     fun refreshCurrency() = commands.onNext(Command.FetchData)
 
-    private fun commandExecutor(): Disposable {
-        return commands
-                .flatMap { execute(it) }
+    private fun model(): Disposable {
+        val limitCurrency = Observable.combineLatest(limit(), currency(), toLimitCurrencyPair())
+
+        val fetchDataReducer = commands
+                .ofType(Command.FetchData::class.java)
+                .flatMap { limitCurrency }
+                .switchMap { fetchCryptoCurrency(it.first, it.second) }
+
+        // In case more reducers/commands are required just create new reducer, and then return the
+        // merge result of the state.
+
+        return fetchDataReducer
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ detailState.value = it })
     }
 
-    private fun execute(command: Command): Observable<DetailState> =
-            when (command) {
-                Command.FetchData -> fetchCryptoCurrency()
-            }
-
-    private fun fetchCryptoCurrency() =
-            Observable.combineLatest(limit(), currency(), toLimitCurrencyPair())
-                    .flatMap { cryptoRepository.fetchCryptoCurrency(id, it.first, it.second) }
-                    .map { DetailState.Currency(it) as DetailState }
-                    .onErrorReturn { DetailState.Error(it.message) }
+    private fun fetchCryptoCurrency(limit: Int, currency: String) =
+            cryptoRepository.fetchCryptoCurrency(id, limit, currency)
+                    .map { State.ShowCurrency(it) as State }
+                    .onErrorReturn { State.ShowError(it.message) }
 
     private fun limit(): Observable<Int> = rxSharedPreferences.limit().asObservable()
 
@@ -65,9 +68,9 @@ class DetailViewModel @Inject constructor(private val id: String,
 
 }
 
-sealed class DetailState {
-    data class Currency(val currency: Crypto?) : DetailState()
-    data class Error(val error: String?) : DetailState()
+sealed class State {
+    data class ShowCurrency(val currency: Crypto?) : State()
+    data class ShowError(val error: String?) : State()
 }
 
 sealed class Command {

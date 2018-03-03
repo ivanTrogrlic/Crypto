@@ -39,7 +39,7 @@ class DetailActivity : DaggerAppCompatActivity() {
 
         detailViewModel.refreshCurrency()
         detailViewModel.detailState
-                .observe(this, Observer<DetailState> {
+                .observe(this, Observer<State> {
                     makeText(this, it.toString(), LENGTH_SHORT).show()
                 })
     }
