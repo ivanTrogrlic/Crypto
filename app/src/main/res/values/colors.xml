@@ -3,4 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="textColor">#d1d1d1</color>
+    <color name="cryptoNameColor">#d7a40a</color>
+    <color name="crypto_item_background">#e7393939</color>
+    <color name="crypto_item_background_ripple">#e7787878</color>
+    <color name="color_positive">#e736b600</color>
+    <color name="color_negative">#e7ff3b3b</color>
 </resources>

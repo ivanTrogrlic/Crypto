@@ -1,2 +1,8 @@
 <resources>
+    <string name="market_cap">Market cap: %s</string>
+    <string name="supply">Supply: %s</string>
+    <string name="hour_change">H</string>
+    <string name="day_change">D</string>
+    <string name="week_change">W</string>
+    <string name="change_percent">%s%%</string>
 </resources>
