@@ -16,6 +16,12 @@
         app:title="@string/app_name"
         app:titleTextColor="@android:color/white" />
 
+    <com.miguelcatalan.materialsearchview.MaterialSearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="parent" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/cryptoCurrencyList"
         android:layout_width="match_parent"

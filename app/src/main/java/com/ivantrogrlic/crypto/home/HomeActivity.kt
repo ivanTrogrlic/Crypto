@@ -13,6 +13,7 @@ import com.ivantrogrlic.crypto.home.Screen.DetailScreen
 import com.ivantrogrlic.crypto.home.Screen.SettingsScreen
 import com.ivantrogrlic.crypto.settings.SettingsActivity
 import com.ivantrogrlic.crypto.utils.showToast
+import com.miguelcatalan.materialsearchview.MaterialSearchView
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_home.*
 import javax.inject.Inject
@@ -40,32 +41,36 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
         homeViewModel.refreshCurrency()
         homeViewModel.homeState
                 .observe(this, Observer {
-                    when (it) {
-                        is State.ShowCurrencies -> {
-                            if (adapter == null) {
-                                adapter = CryptoAdapter(it.currency,
-                                        it.currencies,
-                                        { navigateTo(DetailScreen(it)) })
-                                cryptoCurrencyList.adapter = adapter
-                            } else {
-                                adapter!!.setCryptoCurrencies(it.currencies)
-                                adapter!!.setCurrency(it.currency)
-                            }
+                    it?.let {
+                        if (adapter == null) {
+                            adapter = CryptoAdapter(it.currency,
+                                    it.currencies,
+                                    { navigateTo(DetailScreen(it)) })
+                            cryptoCurrencyList.adapter = adapter
+                        } else {
+                            adapter!!.setCryptoCurrencies(it.currencies)
+                            adapter!!.setCurrency(it.currency)
                         }
-                        is State.ShowError -> showToast(R.string.failed_loading_error_message)
+
+                        it.error?.let { showToast(R.string.failed_loading_error_message) }
                     }
                 })
+
+        searchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                homeViewModel.setFilter(newText)
+                return false
+            }
+        })
     }
 
-    private fun setupToolbar() {
-        toolbar.inflateMenu(R.menu.home_menu)
-        toolbar.setOnMenuItemClickListener {
-            if (it.itemId == R.id.settings_action) {
-                navigateTo(SettingsScreen())
-                return@setOnMenuItemClickListener true
-            }
-            return@setOnMenuItemClickListener false
-        }
+    override fun onBackPressed() {
+        if (searchView.isSearchOpen) searchView.closeSearch()
+        else super.onBackPressed()
     }
 
     override fun navigateTo(screen: Screen) =
@@ -75,6 +80,23 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
             }
 
     override fun goBack() = onBackPressed()
+
+    private fun setupToolbar() {
+        toolbar.inflateMenu(R.menu.home_menu)
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_settings -> {
+                    navigateTo(SettingsScreen())
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.action_search -> {
+                    searchView.showSearch()
+                    return@setOnMenuItemClickListener true
+                }
+                else -> return@setOnMenuItemClickListener false
+            }
+        }
+    }
 
 }
 

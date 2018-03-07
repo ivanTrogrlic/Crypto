@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.widget.EditText
 import com.ivantrogrlic.crypto.R
-import com.ivantrogrlic.crypto.detail.DetailActivity
 import com.ivantrogrlic.crypto.model.Currency
 import com.ivantrogrlic.crypto.utils.currency
 import com.ivantrogrlic.crypto.utils.limit
@@ -27,7 +26,7 @@ class SettingsActivity : DaggerAppCompatActivity() {
 
     companion object {
         fun create(context: Context): Intent =
-                Intent(context, DetailActivity::class.java)
+                Intent(context, SettingsActivity::class.java)
     }
 
     @Inject

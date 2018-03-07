@@ -105,7 +105,10 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.8.0'
 
     // RxSharedPreferences
-    compile 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC3'
+    implementation 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC3'
+
+    // MaterialSearchView
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
 
     // Test dependencies
     implementation 'junit:junit:4.12'
