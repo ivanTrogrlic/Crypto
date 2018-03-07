@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.ivantrogrlic.crypto.model.Crypto
+import com.ivantrogrlic.crypto.model.Currency
 import com.ivantrogrlic.crypto.repository.CryptoRepository
 import com.ivantrogrlic.crypto.utils.currency
 import com.ivantrogrlic.crypto.utils.limit
@@ -52,7 +53,7 @@ class HomeViewModel @Inject constructor(private val cryptoRepository: CryptoRepo
 
     private fun fetchCryptoCurrencies(limit: Int, currency: String) =
             cryptoRepository.fetchCryptoCurrencies(limit, currency)
-                    .map { State.ShowCurrencies(it) as State }
+                    .map { State.ShowCurrencies(Currency.valueOf(currency), it) as State }
                     .onErrorReturn { State.ShowError(it.message) }
 
     private fun limit(): Observable<Int> = rxSharedPreferences.limit().asObservable()
@@ -65,7 +66,7 @@ class HomeViewModel @Inject constructor(private val cryptoRepository: CryptoRepo
 }
 
 sealed class State {
-    data class ShowCurrencies(val currencies: List<Crypto>) : State()
+    data class ShowCurrencies(val currency: Currency, val currencies: List<Crypto>) : State()
     data class ShowError(val error: String?) : State()
 }
 

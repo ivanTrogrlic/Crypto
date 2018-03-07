@@ -1,8 +1,18 @@
 <resources>
-    <string name="market_cap">Market cap: %s</string>
-    <string name="supply">Supply: %s</string>
+    <string name="market_cap">Market cap: %s%s</string>
+    <string name="supply">Supply: $%s</string>
     <string name="hour_change">H</string>
     <string name="day_change">D</string>
     <string name="week_change">W</string>
     <string name="change_percent">%s%%</string>
+    <string name="price">%s%s</string>
+    <string name="usd_symbol">$</string>
+    <string name="eur_symbol">€</string>
+    <string name="cny_symbol">¥</string>
+    <string name="currency_label">Currency</string>
+    <string name="limit_label">Limit</string>
+    <string name="set">SET</string>
+    <string name="settings_label">Settings</string>
+    <string name="set_currency_title">Set currency</string>
+    <string name="set_limit_title">Set limit</string>
 </resources>

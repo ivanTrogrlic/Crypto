@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.ivantrogrlic.crypto.R
 import com.ivantrogrlic.crypto.detail.DetailActivity
 import com.ivantrogrlic.crypto.model.Crypto
+import com.ivantrogrlic.crypto.model.Currency
 import kotlinx.android.synthetic.main.crypto_item.view.*
 
 
@@ -16,7 +17,7 @@ import kotlinx.android.synthetic.main.crypto_item.view.*
  * Created by ivantrogrlic on 04/03/2018.
  */
 
-class CryptoAdapter(private val cryptoList: MutableList<Crypto>)
+class CryptoAdapter(private var currency: Currency, private var cryptoList: List<Crypto>)
     : RecyclerView.Adapter<CryptoAdapter.CryptoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CryptoViewHolder {
@@ -28,7 +29,7 @@ class CryptoAdapter(private val cryptoList: MutableList<Crypto>)
 
     override fun onBindViewHolder(holder: CryptoViewHolder, position: Int) {
         val crypto = cryptoList[position]
-        holder.bind(crypto)
+        holder.bind(currency, crypto)
     }
 
     override fun getItemCount(): Int {
@@ -36,13 +37,16 @@ class CryptoAdapter(private val cryptoList: MutableList<Crypto>)
     }
 
     fun setCryptoCurrencies(cryptoList: List<Crypto>) {
-        this.cryptoList.clear()
-        this.cryptoList.addAll(cryptoList)
+        this.cryptoList = cryptoList
         notifyDataSetChanged()
     }
 
+    fun setCurrency(currency: Currency) {
+        this.currency = currency
+    }
+
     inner class CryptoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(crypto: Crypto) {
+        fun bind(currency: Currency, crypto: Crypto) {
             val context = itemView.context
             itemView.setOnClickListener {
                 // TODO use navigator
@@ -53,9 +57,9 @@ class CryptoAdapter(private val cryptoList: MutableList<Crypto>)
             itemView.rank.text = crypto.rank.toString()
             itemView.symbol.text = crypto.symbol
             itemView.name.text = crypto.name
-            itemView.price.text = crypto.priceUsd
-            itemView.marketCap.text = context.getString(R.string.market_cap, crypto.marketCapUsd)
+            itemView.marketCap.text = context.getString(R.string.market_cap, currency.getSymbol(context), crypto.getMarketCap(currency))
             itemView.supply.text = context.getString(R.string.supply, crypto.totalSupply)
+            itemView.price.text = context.getString(R.string.price, currency.getSymbol(context), crypto.getPrice(currency))
             itemView.hourChangeValue.text = context.getString(R.string.change_percent, crypto.percentChangeHour)
             itemView.dayChangeValue.text = context.getString(R.string.change_percent, crypto.percentChangeDay)
             itemView.weekChangeValue.text = context.getString(R.string.change_percent, crypto.percentChangeWeek)
