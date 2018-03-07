@@ -1,11 +1,14 @@
 package com.ivantrogrlic.crypto.settings
 
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.widget.EditText
 import com.ivantrogrlic.crypto.R
+import com.ivantrogrlic.crypto.detail.DetailActivity
 import com.ivantrogrlic.crypto.model.Currency
 import com.ivantrogrlic.crypto.utils.currency
 import com.ivantrogrlic.crypto.utils.limit
@@ -21,6 +24,11 @@ import javax.inject.Inject
  */
 
 class SettingsActivity : DaggerAppCompatActivity() {
+
+    companion object {
+        fun create(context: Context): Intent =
+                Intent(context, DetailActivity::class.java)
+    }
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences

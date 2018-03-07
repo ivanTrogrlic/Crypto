@@ -3,21 +3,22 @@ package com.ivantrogrlic.crypto.home
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.LinearLayout.VERTICAL
-import android.widget.Toast.LENGTH_SHORT
-import android.widget.Toast.makeText
 import com.ivantrogrlic.crypto.R
+import com.ivantrogrlic.crypto.detail.DetailActivity
+import com.ivantrogrlic.crypto.home.Screen.DetailScreen
+import com.ivantrogrlic.crypto.home.Screen.SettingsScreen
 import com.ivantrogrlic.crypto.settings.SettingsActivity
+import com.ivantrogrlic.crypto.utils.showToast
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_home.*
 import javax.inject.Inject
 
 
-class HomeActivity : DaggerAppCompatActivity() {
+class HomeActivity : DaggerAppCompatActivity(), Navigator {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -42,14 +43,16 @@ class HomeActivity : DaggerAppCompatActivity() {
                     when (it) {
                         is State.ShowCurrencies -> {
                             if (adapter == null) {
-                                adapter = CryptoAdapter(it.currency, it.currencies)
+                                adapter = CryptoAdapter(it.currency,
+                                        it.currencies,
+                                        { navigateTo(DetailScreen(it)) })
                                 cryptoCurrencyList.adapter = adapter
                             } else {
                                 adapter!!.setCryptoCurrencies(it.currencies)
                                 adapter!!.setCurrency(it.currency)
                             }
                         }
-                        is State.ShowError -> makeText(this, "FAILED", LENGTH_SHORT).show()
+                        is State.ShowError -> showToast(R.string.failed_loading_error_message)
                     }
                 })
     }
@@ -58,12 +61,29 @@ class HomeActivity : DaggerAppCompatActivity() {
         toolbar.inflateMenu(R.menu.home_menu)
         toolbar.setOnMenuItemClickListener {
             if (it.itemId == R.id.settings_action) {
-                // TODO Navigator
-                startActivity(Intent(this, SettingsActivity::class.java))
+                navigateTo(SettingsScreen())
                 return@setOnMenuItemClickListener true
             }
             return@setOnMenuItemClickListener false
         }
     }
 
+    override fun navigateTo(screen: Screen) =
+            when (screen) {
+                is DetailScreen -> startActivity(DetailActivity.create(this, screen.id))
+                is SettingsScreen -> startActivity(SettingsActivity.create(this))
+            }
+
+    override fun goBack() = onBackPressed()
+
+}
+
+sealed class Screen {
+    class DetailScreen(val id: String) : Screen()
+    class SettingsScreen : Screen()
+}
+
+interface Navigator {
+    fun navigateTo(screen: Screen)
+    fun goBack()
 }

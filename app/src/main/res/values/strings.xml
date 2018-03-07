@@ -15,4 +15,5 @@
     <string name="settings_label">Settings</string>
     <string name="set_currency_title">Set currency</string>
     <string name="set_limit_title">Set limit</string>
+    <string name="failed_loading_error_message">Failed loading crypto currencies</string>
 </resources>

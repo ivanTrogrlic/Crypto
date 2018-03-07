@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ivantrogrlic.crypto.R
-import com.ivantrogrlic.crypto.detail.DetailActivity
 import com.ivantrogrlic.crypto.model.Crypto
 import com.ivantrogrlic.crypto.model.Currency
 import kotlinx.android.synthetic.main.crypto_item.view.*
@@ -17,7 +16,9 @@ import kotlinx.android.synthetic.main.crypto_item.view.*
  * Created by ivantrogrlic on 04/03/2018.
  */
 
-class CryptoAdapter(private var currency: Currency, private var cryptoList: List<Crypto>)
+class CryptoAdapter(private var currency: Currency,
+                    private var cryptoList: List<Crypto>,
+                    private val clickListener: (String) -> (Unit))
     : RecyclerView.Adapter<CryptoAdapter.CryptoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CryptoViewHolder {
@@ -47,13 +48,9 @@ class CryptoAdapter(private var currency: Currency, private var cryptoList: List
 
     inner class CryptoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun bind(currency: Currency, crypto: Crypto) {
-            val context = itemView.context
-            itemView.setOnClickListener {
-                // TODO use navigator
-                val intent = DetailActivity.create(context, crypto.id)
-                context.startActivity(intent)
-            }
+            itemView.setOnClickListener { clickListener(crypto.id) }
 
+            val context = itemView.context
             itemView.rank.text = crypto.rank.toString()
             itemView.symbol.text = crypto.symbol
             itemView.name.text = crypto.name
