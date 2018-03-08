@@ -25,3 +25,4 @@ fun SharedPreferences.currency() = getString(KEY_CURRENCY, DEFAULT_CURRENCY)
 fun SharedPreferences.saveCurrency(currency: String) = edit().putString(KEY_CURRENCY, currency).apply()
 
 fun Context.showToast(@StringRes message: Int) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+fun Context.showToast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

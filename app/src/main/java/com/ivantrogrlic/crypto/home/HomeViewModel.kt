@@ -43,6 +43,10 @@ class HomeViewModel @Inject constructor(private val cryptoRepository: CryptoRepo
     private fun model(): Disposable {
         val limitCurrency = Observable.combineLatest(limit(), currency(), toLimitCurrencyPair())
 
+        val isLoadingReducer = commands
+                .ofType(Command.FetchData::class.java)
+                .map { isLoadingReducer(true) }
+
         val fetchData = commands
                 .ofType(Command.FetchData::class.java)
                 .flatMap { limitCurrency }
@@ -64,7 +68,8 @@ class HomeViewModel @Inject constructor(private val cryptoRepository: CryptoRepo
                     }
                 }.map { filterReducer(it) }
 
-        return Observable.merge(fetchDataReducer, filterReducer)
+        val reducers = listOf(fetchDataReducer, filterReducer, isLoadingReducer)
+        return Observable.merge(reducers)
                 .scan(State.initialState(), { state, reducer -> reducer(state) })
                 .observeOn(AndroidSchedulers.mainThread())
                 .distinctUntilChanged()
@@ -95,6 +100,10 @@ class HomeViewModel @Inject constructor(private val cryptoRepository: CryptoRepo
 
     private fun failedFetchingCurrenciesReducer(error: Throwable): StateReducer = { state ->
         state.copy(error = error.message, isLoading = false)
+    }
+
+    private fun isLoadingReducer(isLoading: Boolean): StateReducer = { state ->
+        state.copy(isLoading = isLoading)
     }
 
 }
