@@ -42,6 +42,7 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
         homeViewModel.homeState
                 .observe(this, Observer { render(it) })
 
+        swipeRefresh.setOnRefreshListener({ homeViewModel.refreshCurrency() })
         observeSearchChanges(homeViewModel)
     }
 
@@ -69,6 +70,8 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
                 adapter!!.setCryptoCurrencies(it.currencies)
                 adapter!!.setCurrency(it.currency)
             }
+
+            swipeRefresh.isRefreshing = it.isLoading
 
             it.error?.let { showToast(R.string.failed_loading_error_message) }
         }

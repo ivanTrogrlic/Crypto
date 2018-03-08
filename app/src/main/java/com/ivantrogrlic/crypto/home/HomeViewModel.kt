@@ -90,20 +90,23 @@ class HomeViewModel @Inject constructor(private val cryptoRepository: CryptoRepo
     }
 
     private fun fetchCurrenciesReducer(currencies: List<Crypto>): StateReducer = { state ->
-        state.copy(currencies = currencies, error = null)
+        state.copy(currencies = currencies, error = null, isLoading = false)
     }
 
     private fun failedFetchingCurrenciesReducer(error: Throwable): StateReducer = { state ->
-        state.copy(error = error.message)
+        state.copy(error = error.message, isLoading = false)
     }
 
 }
 
 typealias StateReducer = (State) -> State
 
-data class State(val currency: Currency, val currencies: List<Crypto>, val error: String? = null) {
+data class State(val currency: Currency,
+                 val currencies: List<Crypto>,
+                 val isLoading: Boolean,
+                 val error: String? = null) {
     companion object {
-        fun initialState() = State(Currency.USD, emptyList())
+        fun initialState() = State(Currency.USD, emptyList(), true)
     }
 }
 

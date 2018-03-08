@@ -22,10 +22,17 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="parent" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/cryptoCurrencyList"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/cryptoCurrencyList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </android.support.constraint.ConstraintLayout>
