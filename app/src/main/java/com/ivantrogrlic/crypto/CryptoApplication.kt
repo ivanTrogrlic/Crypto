@@ -1,31 +1,21 @@
 package com.ivantrogrlic.crypto
 
-import android.app.Application
-import com.ivantrogrlic.crypto.dagger.AppComponent
-import com.ivantrogrlic.crypto.dagger.DaggerAppComponent
-import com.ivantrogrlic.crypto.rest.RestComponent
+import com.ivantrogrlic.crypto.di.DaggerAppComponent
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
+
 
 /**
  * Created by ivantrogrlic on 26/02/2018.
  */
 
-class CryptoApplication : Application() {
+class CryptoApplication : DaggerApplication() {
 
-    companion object {
-        lateinit var appComponent: AppComponent
-        var netComponent: RestComponent? = null
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        appComponent = DaggerAppComponent
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        return DaggerAppComponent
                 .builder()
                 .application(this)
                 .build()
-        appComponent.inject(this)
     }
-
-    fun component() = appComponent
-    fun netComponent() = netComponent
 
 }

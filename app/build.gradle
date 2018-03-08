@@ -11,6 +11,7 @@ android {
         targetSdkVersion 26
         multiDexEnabled true
 
+        vectorDrawables.useSupportLibrary = true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -69,18 +70,25 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
+    // Architecture components
+    implementation "android.arch.lifecycle:extensions:1.1.0"
+    kapt "android.arch.lifecycle:compiler:1.1.0"
+    implementation "android.arch.lifecycle:common-java8:1.1.0"
+
     //Dagger 2
-    kapt 'com.google.dagger:dagger-compiler:2.11'
-    kapt 'com.google.dagger:dagger-android-processor:2.11-rc2'
-    implementation 'com.google.dagger:dagger:2.11'
-    implementation 'com.google.dagger:dagger-android:2.11'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.11'
+    kapt 'com.google.dagger:dagger-compiler:2.14.1'
+    kapt 'com.google.dagger:dagger-android-processor:2.14.1'
+    implementation 'com.google.dagger:dagger:2.14.1'
+    implementation 'com.google.dagger:dagger-android:2.14.1'
+    implementation 'com.google.dagger:dagger-android-support:2.14.1'
+
     // RxJava 2
     implementation 'io.reactivex.rxjava2:rxjava:2.1.1'
     implementation('io.reactivex.rxjava2:rxandroid:2.0.1') { exclude module: 'rxjava' }
+
     // Gson
     implementation 'com.google.code.gson:gson:2.8.1'
+
     // Retrofit 2
     implementation('com.squareup.retrofit2:retrofit:2.3.0') {
         exclude module: 'com.squareup.okio'
@@ -91,15 +99,17 @@ dependencies {
     implementation('com.squareup.retrofit2:adapter-rxjava2:2.3.0') {
         exclude module: 'com.squareup.okio'
     }
+
     // OkHttp 3
     implementation('com.squareup.okhttp3:logging-interceptor:3.4.1')
-    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
-    // Picasso
-    implementation 'com.squareup.picasso:picasso:2.5.2'
-    // Parceler
-    implementation 'org.parceler:parceler-api:1.1.9'
-    kapt 'org.parceler:parceler:1.1.9'
-    implementation 'org.jetbrains.anko:anko:0.10.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.8.0'
+
+    // RxSharedPreferences
+    implementation 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC3'
+
+    // MaterialSearchView
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+
     // Test dependencies
     implementation 'junit:junit:4.12'
     implementation('com.android.support.test.espresso:espresso-core:3.0.1', {

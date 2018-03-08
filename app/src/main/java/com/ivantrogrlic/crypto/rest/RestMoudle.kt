@@ -1,7 +1,7 @@
 package com.ivantrogrlic.crypto.rest
 
 import com.ivantrogrlic.crypto.BuildConfig
-import com.ivantrogrlic.crypto.dagger.PerServer
+import com.ivantrogrlic.crypto.repository.CryptoRepository
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -10,6 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 /**
  * Created by ivantrogrlic on 26/02/2018.
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit
 class RestModule {
 
     @Provides
-    @PerServer
+    @Singleton
     fun okHttpClient(): OkHttpClient {
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
@@ -32,7 +33,7 @@ class RestModule {
     }
 
     @Provides
-    @PerServer
+    @Singleton
     fun retrofit(okHttpClient: OkHttpClient): Retrofit =
             Retrofit.Builder()
                     .baseUrl(BuildConfig.CRYPTO_BASE_API)
@@ -42,8 +43,13 @@ class RestModule {
                     .build()
 
     @Provides
-    @PerServer
+    @Singleton
     fun cryptoWebService(retrofit: Retrofit): CryptoWebService =
             retrofit.create(CryptoWebService::class.java)
+
+    @Provides
+    @Singleton
+    fun cryptoRepository(cryptoWebService: CryptoWebService): CryptoRepository =
+            CryptoRepository(cryptoWebService)
 
 }

@@ -1,12 +1,13 @@
-package com.ivantrogrlic.crypto.dagger
+package com.ivantrogrlic.crypto.di
 
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.ivantrogrlic.crypto.CryptoApplication
-import com.ivantrogrlic.crypto.rest.RestComponent
 import dagger.BindsInstance
 import dagger.Component
+import dagger.android.AndroidInjector
+import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 /**
@@ -14,8 +15,10 @@ import javax.inject.Singleton
  */
 
 @Singleton
-@Component(modules = arrayOf(AppModule::class))
-interface AppComponent {
+@Component(modules = arrayOf(AndroidSupportInjectionModule::class,
+        AppModule::class,
+        ActivityBindingModule::class))
+interface AppComponent : AndroidInjector<CryptoApplication> {
 
     @Component.Builder
     interface Builder {
@@ -25,12 +28,8 @@ interface AppComponent {
         fun build(): AppComponent
     }
 
-    fun inject(app: CryptoApplication)
-
     @ApplicationContext
     fun context(): Context
-
-    fun netComponentBuilder(): RestComponent.Builder
 
     fun sharedPreferences(): SharedPreferences
 
