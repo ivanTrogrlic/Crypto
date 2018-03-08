@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import com.ivantrogrlic.crypto.model.Crypto
+import com.ivantrogrlic.crypto.model.Currency
 import com.ivantrogrlic.crypto.repository.CryptoRepository
 import com.ivantrogrlic.crypto.utils.currency
 import com.ivantrogrlic.crypto.utils.limit
@@ -46,9 +47,6 @@ class DetailViewModel @Inject constructor(private val id: String,
                 .flatMap { limitCurrency }
                 .switchMap { fetchCryptoCurrency(it.first, it.second) }
 
-        // In case more reducers/commands are required just create new reducer, and then return the
-        // merge result of the state.
-
         return fetchDataReducer
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ detailState.value = it })
@@ -56,7 +54,7 @@ class DetailViewModel @Inject constructor(private val id: String,
 
     private fun fetchCryptoCurrency(limit: Int, currency: String) =
             cryptoRepository.fetchCryptoCurrency(id, limit, currency)
-                    .map { State.ShowCurrency(it) as State }
+                    .map { State.ShowCurrency(it, Currency.valueOf(currency)) as State }
                     .onErrorReturn { State.ShowError(it.message) }
 
     private fun limit(): Observable<Int> = rxSharedPreferences.limit().asObservable()
@@ -69,7 +67,7 @@ class DetailViewModel @Inject constructor(private val id: String,
 }
 
 sealed class State {
-    data class ShowCurrency(val currency: Crypto?) : State()
+    data class ShowCurrency(val crypto: Crypto, val currency: Currency) : State()
     data class ShowError(val error: String?) : State()
 }
 

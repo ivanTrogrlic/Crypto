@@ -40,32 +40,9 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
 
         homeViewModel.refreshCurrency()
         homeViewModel.homeState
-                .observe(this, Observer {
-                    it?.let {
-                        if (adapter == null) {
-                            adapter = CryptoAdapter(it.currency,
-                                    it.currencies,
-                                    { navigateTo(DetailScreen(it)) })
-                            cryptoCurrencyList.adapter = adapter
-                        } else {
-                            adapter!!.setCryptoCurrencies(it.currencies)
-                            adapter!!.setCurrency(it.currency)
-                        }
+                .observe(this, Observer { render(it) })
 
-                        it.error?.let { showToast(R.string.failed_loading_error_message) }
-                    }
-                })
-
-        searchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                homeViewModel.setFilter(newText)
-                return false
-            }
-        })
+        observeSearchChanges(homeViewModel)
     }
 
     override fun onBackPressed() {
@@ -80,6 +57,22 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
             }
 
     override fun goBack() = onBackPressed()
+
+    private fun render(it: State?) {
+        it?.let {
+            if (adapter == null) {
+                adapter = CryptoAdapter(it.currency,
+                        it.currencies,
+                        { navigateTo(DetailScreen(it)) })
+                cryptoCurrencyList.adapter = adapter
+            } else {
+                adapter!!.setCryptoCurrencies(it.currencies)
+                adapter!!.setCurrency(it.currency)
+            }
+
+            it.error?.let { showToast(R.string.failed_loading_error_message) }
+        }
+    }
 
     private fun setupToolbar() {
         toolbar.inflateMenu(R.menu.home_menu)
@@ -96,6 +89,19 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
                 else -> return@setOnMenuItemClickListener false
             }
         }
+    }
+
+    private fun observeSearchChanges(homeViewModel: HomeViewModel) {
+        searchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                homeViewModel.setFilter(newText)
+                return false
+            }
+        })
     }
 
 }

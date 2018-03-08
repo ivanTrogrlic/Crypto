@@ -3,7 +3,6 @@ package com.ivantrogrlic.crypto.repository
 import com.ivantrogrlic.crypto.model.Crypto
 import com.ivantrogrlic.crypto.rest.CryptoWebService
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Singleton
 
@@ -20,7 +19,7 @@ class CryptoRepository(private val cryptoWebService: CryptoWebService) {
 
     fun fetchCryptoCurrency(id: String, limit: Int, convert: String): Observable<Crypto> =
             cryptoWebService.getCrypto(id, limit, convert)
-                    .map { it[0] } // TODO
+                    .map { it[0] }
                     .subscribeOn(Schedulers.io())
 
 }
