@@ -1,9 +1,9 @@
 package com.ivantrogrlic.crypto.detail
 
 import com.f2prateek.rx.preferences2.RxSharedPreferences
+import com.ivantrogrlic.crypto.db.CryptoDao
 import com.ivantrogrlic.crypto.di.CryptoKey
 import com.ivantrogrlic.crypto.di.PerActivity
-import com.ivantrogrlic.crypto.repository.CryptoRepository
 import dagger.Module
 import dagger.Provides
 
@@ -25,8 +25,8 @@ class DetailModule {
     @PerActivity
     fun bindDetailViewModelFactory(@CryptoKey id: String,
                                    rxSharedPreferences: RxSharedPreferences,
-                                   repository: CryptoRepository): DetailViewModelFactory {
-        return DetailViewModelFactory(id, rxSharedPreferences, repository)
+                                   cryptoDao: CryptoDao): DetailViewModelFactory {
+        return DetailViewModelFactory(id, rxSharedPreferences, cryptoDao)
     }
 
 }
