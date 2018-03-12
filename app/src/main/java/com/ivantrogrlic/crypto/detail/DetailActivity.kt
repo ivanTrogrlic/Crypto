@@ -39,11 +39,12 @@ class DetailActivity : DaggerAppCompatActivity() {
                 .of(this, viewModelFactory)
                 .get(DetailViewModel::class.java)
 
-        detailViewModel.refreshCurrency()
         detailViewModel.detailState
                 .observe(this, Observer<State> {
                     it!!.let { render(it) }
                 })
+
+        detailViewModel.loadCurrency()
     }
 
     private fun render(state: State) {

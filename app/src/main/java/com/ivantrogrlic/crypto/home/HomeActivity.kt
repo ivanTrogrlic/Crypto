@@ -38,9 +38,8 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
         cryptoCurrencyList.layoutManager = LinearLayoutManager(this)
         cryptoCurrencyList.addItemDecoration(DividerItemDecoration(this, VERTICAL))
 
+        homeViewModel.homeState.observe(this, Observer { render(it) })
         homeViewModel.refreshCurrency()
-        homeViewModel.homeState
-                .observe(this, Observer { render(it) })
 
         swipeRefresh.setOnRefreshListener({ homeViewModel.refreshCurrency() })
         observeSearchChanges(homeViewModel)
@@ -69,6 +68,10 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
             } else {
                 adapter!!.setCryptoCurrencies(it.currencies)
                 adapter!!.setCurrency(it.currency)
+            }
+
+            if (it.canLoadIn > 0) {
+                showToast(getString(R.string.cannot_reload, it.canLoadIn))
             }
 
             swipeRefresh.isRefreshing = it.isLoading
