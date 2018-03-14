@@ -18,4 +18,10 @@
     <string name="failed_loading_error_message">Failed loading crypto currencies</string>
     <string name="details_title">%s (%s)</string>
     <string name="cannot_reload">You can reload again in %d seconds</string>
+    <string name="search">Search</string>
+    <string name="sort">Sort</string>
+    <string name="sort_by_name">Name</string>
+    <string name="sort_by_price">Price</string>
+    <string name="sort_by_rank">Rank</string>
+    <string name="sort_by_title">Sort by</string>
 </resources>

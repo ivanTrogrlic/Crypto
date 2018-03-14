@@ -3,7 +3,9 @@ package com.ivantrogrlic.crypto.home
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.DialogInterface
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.LinearLayout.VERTICAL
@@ -25,13 +27,14 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private var adapter: CryptoAdapter? = null
+    private lateinit var homeViewModel: HomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         setupToolbar()
 
-        val homeViewModel = ViewModelProviders
+        homeViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(HomeViewModel::class.java)
 
@@ -92,6 +95,10 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
                     searchView.showSearch()
                     return@setOnMenuItemClickListener true
                 }
+                R.id.action_sort -> {
+                    showSortDialog()
+                    return@setOnMenuItemClickListener true
+                }
                 else -> return@setOnMenuItemClickListener false
             }
         }
@@ -108,6 +115,29 @@ class HomeActivity : DaggerAppCompatActivity(), Navigator {
                 return false
             }
         })
+    }
+
+    private fun showSortDialog() {
+        val sortOptions = Sort.values().map { it.getName(this) }.toTypedArray()
+        val currentSortOption = homeViewModel.homeState.value?.sort
+        val currentSortPosition = Sort.values().indexOf(currentSortOption)
+
+        AlertDialog.Builder(this)
+                .setTitle(R.string.sort_by_title)
+                .setSingleChoiceItems(sortOptions, currentSortPosition, null)
+                .setPositiveButton(R.string.set, { dialog, _ ->
+                    handleSortOptionSelected(dialog)
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+    }
+
+    private fun handleSortOptionSelected(dialog: DialogInterface) {
+        val selectedPosition = (dialog as AlertDialog).listView.checkedItemPosition
+        val selectedSortOption = Sort.values()[selectedPosition]
+
+        homeViewModel.sortBy(selectedSortOption)
+        dialog.dismiss()
     }
 
 }

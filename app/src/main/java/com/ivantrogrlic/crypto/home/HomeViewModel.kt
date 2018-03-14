@@ -2,9 +2,11 @@ package com.ivantrogrlic.crypto.home
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.content.Context
 import android.content.SharedPreferences
 import android.text.TextUtils
 import com.f2prateek.rx.preferences2.RxSharedPreferences
+import com.ivantrogrlic.crypto.R
 import com.ivantrogrlic.crypto.db.CryptoDao
 import com.ivantrogrlic.crypto.model.Crypto
 import com.ivantrogrlic.crypto.model.Currency
@@ -50,6 +52,7 @@ class HomeViewModel @Inject constructor(private val cryptoDao: CryptoDao,
 
     fun refreshCurrency() = commands.onNext(Command.FetchData)
     fun setFilter(filter: String) = commands.onNext(Command.Filter(filter))
+    fun sortBy(sort: Sort) = commands.onNext(Command.SortBy(sort))
 
     private fun model(): Disposable {
         val limitCurrency = Observable.combineLatest(limit(), currency(), toLimitCurrencyPair())
@@ -74,6 +77,7 @@ class HomeViewModel @Inject constructor(private val cryptoDao: CryptoDao,
                 .map { currencyReducer(Currency.valueOf(it.second)) }
 
         val localCurrenciesReducer = localData
+                .switchMap { sortCurrencies(it) }
                 .map { currenciesReducer(it) }
 
         val fetchDataReducer = commands
@@ -81,6 +85,7 @@ class HomeViewModel @Inject constructor(private val cryptoDao: CryptoDao,
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .flatMap { limitCurrency }
                 .switchMap { fetchOrSkip(it) }
+                .switchMap { sortCurrencies(it) }
                 .map { currenciesReducer(it) }
                 .onErrorReturn { failedFetchingCurrenciesReducer(it) }
 
@@ -89,10 +94,15 @@ class HomeViewModel @Inject constructor(private val cryptoDao: CryptoDao,
                 .map { it.filter }
                 .switchMap { filter -> localData.map { filterReducer(it, filter) } }
 
+        val sortReducer =
+                commands.ofType(Command.SortBy::class.java)
+                        .map { sortReducer(it.sort) }
+
         val reducers = listOf(currencyReducer,
                 localCurrenciesReducer,
                 fetchDataReducer,
                 filterReducer,
+                sortReducer,
                 isLoadingReducer,
                 alreadyLoadedReducer)
 
@@ -119,6 +129,18 @@ class HomeViewModel @Inject constructor(private val cryptoDao: CryptoDao,
                     .doOnNext({ cryptoDao.insertAll(it) })
                     .doOnNext({ sharedPreferences.saveLastLoaded(currency, Date().time) })
 
+    private fun sortCurrencies(currencies: List<Crypto>) =
+            commands.ofType(Command.SortBy::class.java)
+                    .startWith(Command.SortBy(Sort.RANK))
+                    .map { sort ->
+                        currencies.sortedWith(
+                                when (sort.sort) {
+                                    Sort.RANK -> compareBy({ it.rank })
+                                    Sort.NAME -> compareBy(Crypto::name)
+                                    Sort.PRICE -> compareByDescending({ it.priceBtc.toDouble() })
+                                })
+                    }
+
     private fun filterByName(filter: String, it: Crypto) =
             if (!TextUtils.isEmpty(filter)) it.name.startsWith(filter, true) else true
 
@@ -132,6 +154,10 @@ class HomeViewModel @Inject constructor(private val cryptoDao: CryptoDao,
     private fun filterReducer(currencies: List<Crypto>, filter: String): StateReducer = { state ->
         val filteredCurrencies = currencies.filter { filterByName(filter, it) }
         state.copy(currencies = filteredCurrencies, error = null, canLoadIn = 0)
+    }
+
+    private fun sortReducer(sort: Sort): StateReducer = { state ->
+        state.copy(sort = sort)
     }
 
     private fun currenciesReducer(currencies: List<Crypto>): StateReducer = { state ->
@@ -163,9 +189,10 @@ data class State(val currency: Currency,
                  val currencies: List<Crypto>,
                  val canLoadIn: Long,
                  val isLoading: Boolean,
+                 val sort: Sort,
                  val error: String? = null) {
     companion object {
-        fun initialState() = State(Currency.USD, emptyList(), 0, true)
+        fun initialState() = State(Currency.USD, emptyList(), 0, true, Sort.RANK)
     }
 }
 
@@ -173,4 +200,19 @@ sealed class Command {
     object FetchData : Command()
     data class AlreadyLoaded(val lastLoaded: Long) : Command()
     data class Filter(val filter: String) : Command()
+    data class SortBy(val sort: Sort) : Command()
+}
+
+enum class Sort {
+    RANK {
+        override fun getName(context: Context): String = context.getString(R.string.sort_by_rank)
+    },
+    NAME {
+        override fun getName(context: Context): String = context.getString(R.string.sort_by_name)
+    },
+    PRICE {
+        override fun getName(context: Context): String = context.getString(R.string.sort_by_price)
+    };
+
+    abstract fun getName(context: Context): String
 }

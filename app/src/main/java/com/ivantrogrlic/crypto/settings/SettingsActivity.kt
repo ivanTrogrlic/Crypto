@@ -52,7 +52,7 @@ class SettingsActivity : DaggerAppCompatActivity() {
                 .setTitle(R.string.set_currency_title)
                 .setSingleChoiceItems(currencies, currencyIndex, null)
                 .setPositiveButton(R.string.set, { dialog, _ ->
-                    handleCurrencySelected(dialog, currencies)
+                    handleCurrencySelected(dialog)
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
@@ -73,12 +73,12 @@ class SettingsActivity : DaggerAppCompatActivity() {
                 .show()
     }
 
-    private fun handleCurrencySelected(dialog: DialogInterface, currencies: Array<String>) {
+    private fun handleCurrencySelected(dialog: DialogInterface) {
         val selectedPosition = (dialog as AlertDialog).listView.checkedItemPosition
-        val selectedCurrency = currencies[selectedPosition]
+        val selectedCurrency = Currency.values()[selectedPosition]
 
-        sharedPreferences.saveCurrency(selectedCurrency)
-        currency.text = selectedCurrency
+        sharedPreferences.saveCurrency(selectedCurrency.name)
+        currency.text = selectedCurrency.name
 
         dialog.dismiss()
     }
